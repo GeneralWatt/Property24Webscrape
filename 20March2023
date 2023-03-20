@@ -1,0 +1,36 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+
+# set up variables
+base_url = 'https://www.property24.com/for-sale/randburg/gauteng/8?page='
+num_pages = 50
+
+# open csv file for writing
+with open('housing.csv', 'w', encoding='utf8', newline='') as f:
+    writer = csv.writer(f)
+    header = ['Title', 'Price', 'Information', 'Description']
+    writer.writerow(header)
+
+    # loop over each page and scrape data
+    for page_num in range(1, num_pages + 1):
+        # construct page URL
+        url = base_url + str(page_num)
+
+        # retrieve page content
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        # find all relevant elements
+        lists = soup.find_all('span', class_='p24_content')
+
+        # loop over each element and extract data
+        for lst in lists:
+            title = lst.find('span', class_='p24_title').text.replace('\n', '')
+            price = lst.find('span', class_='p24_price').text.replace('\n', '').replace('\r', '')
+            information = lst.find('span', class_='p24_location').text.replace('\n', '').replace('\r', '')
+            description = lst.find('span', class_='p24_excerpt').text.replace('\n', '').replace('\r', '')
+            info = [title, price, information, description]
+            writer.writerow(info)
+
+print('Scraping complete!')
