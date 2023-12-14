@@ -3,10 +3,10 @@ import requests
 import csv
 
 # source
-base_url = 'https://www.property24.com/for-sale/somerset-west/western-cape/390/p'
+base_url = 'https://www.property24.com/for-sale/western-cape/9/p'
 
 #number of pages
-num_pages = 5
+num_pages = 2222
 
 # open csv file for writing
 with open('data.csv', 'w', encoding='utf8', newline='') as f:
@@ -35,8 +35,10 @@ with open('data.csv', 'w', encoding='utf8', newline='') as f:
 
         # loop over each element and extract data
         for prop in properties:
+
             title = prop.find('span', class_='p24_title').text.replace('\n', '')
-            price = prop.find('span', class_='p24_price').text.replace('\n', '').replace('\r', '')
+
+            price = prop.find('span', class_='p24_price').text.replace('\n', '').replace('\r', '').replace(' ','')
             
             #Area
             location = prop.find('span', class_='p24_location').text.replace('\n', '').replace('\r', '')
@@ -60,8 +62,8 @@ with open('data.csv', 'w', encoding='utf8', newline='') as f:
                 parking = 0
                 
             #get size
-            try
-                size = lists[0].find('span',class_='p24_size').text.replace('\n', '')
+            try:
+                size = prop.find('span',class_='p24_size').text.replace('\n', '')
             except:
                 size = 0
                 
